@@ -1,18 +1,24 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static BitBoard;
 
 /// <summary>
 /// Checkers piece structure used for display purposes.
 /// </summary>
 public class Piece : MonoBehaviour
 {
+    private static readonly Vector3 xy = new Vector3(1, 1, 0);
+    public static Main mainController;
+    public static Color LIGHT, DARK;
+    public static float speed = 10f;
+    public static Sprite PIECE, QUEEN;
     private Vector3 curVelocity = Vector3.zero;
     private SpriteRenderer spriteRenderer;
-    public static Sprite PIECE, QUEEN;
-    public static Color LIGHT, DARK;
-    public static float speed = 5f;
-    public bool isQueen;
+    private Vector2Int originalPos;
+    Vector2 pieceOffset = new Vector2(-0.5f, -0.5f);
+    private int curBitBoardPos;
+    private PieceType pieceType;
 
     void Awake()
     {
@@ -23,15 +29,32 @@ public class Piece : MonoBehaviour
     /// <summary>
     /// Initializer for basic piece.
     /// </summary>
-    /// <param name="sprite">Sprite that will be used for new piece</param>
-    /// <param name="color">Color hue to be applied to new piece.</param>
-    /// <param name="position">Initial position of piece.</param>
+    /// <param name="color">Color type to be applied to new piece.</param>
+    /// <param name="bitBoardPos">Position on bit board.</param>
     /// <param name="queenStatus">Is the piece a queen?</param>
-    public void Initialize(Sprite sprite, Color color, bool queenStatus)
+    public void Initialize(PieceType color, int bitBoardPos, bool queenStatus)
     {
-        spriteRenderer.sprite = sprite;
-        spriteRenderer.color = color;
-        isQueen = queenStatus;
+        curBitBoardPos = bitBoardPos;
+
+        if (color == PieceType.whitePieces)
+        {
+            spriteRenderer.color = LIGHT;
+        }
+        else
+        {
+            spriteRenderer.color = DARK;
+        }
+
+        if (queenStatus)
+        {
+            spriteRenderer.sprite = QUEEN;
+            pieceType = PieceType.queenPieces;
+        }
+        else
+        {
+            spriteRenderer.sprite = PIECE;
+            pieceType = color;
+        }
     }
 
     /// <summary>
@@ -55,6 +78,40 @@ public class Piece : MonoBehaviour
 
             // Wait for one frame, then continue until target is reached.
             yield return null;
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        originalPos = new Vector2Int((int)transform.position.x, (int)transform.position.y);
+        //TODO: Display legal moves.
+    }
+
+    // Move piece to mouse position while being dragged.
+    private void OnMouseDrag()
+    {
+        Ray cameraRaycast = DisplayManager.mainCamera.ScreenPointToRay(Input.mousePosition);
+        transform.position = new Vector2(cameraRaycast.origin.x, cameraRaycast.origin.y) + pieceOffset;
+    }
+
+    // Place piece on closest board position if available.
+    void OnMouseUp()
+    {
+        int closestX = Mathf.RoundToInt(transform.position.x);
+        int closestY = Mathf.RoundToInt(transform.position.y);
+        Vector2Int newPos = new Vector2Int(closestX, closestY);
+
+        // Check if new position is an allowed position on the board. If not, return to original position.
+        if ((closestX % 2 == closestY % 2) && closestX >= -0.01f && closestX <= 7.01f && closestY >= -0.01f && closestY <= 7.01f && Vector2.Distance(newPos, transform.position) <= 0.5f)
+        {
+            MoveTo(newPos);
+            int newBitBoardPos = DisplayManager.PositionToInt(newPos);
+            mainController.bitBoardManager.MovePiece(pieceType, curBitBoardPos, newBitBoardPos);
+            curBitBoardPos = newBitBoardPos;
+        }
+        else
+        {
+            MoveTo(originalPos);
         }
     }
 }
