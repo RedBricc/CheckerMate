@@ -359,7 +359,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 207521642}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4, y: -4, z: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -443,7 +443,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 4, y: 4, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -535,7 +535,7 @@ GameObject:
   - component: {fileID: 1277020587}
   - component: {fileID: 1277020586}
   m_Layer: 0
-  m_Name: Game
+  m_Name: Game Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -553,9 +553,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b85511cf0b7ff9c47816c7d61cab139e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  whitePieces: 0
-  blackPieces: 0
-  queenPieces: 0
 --- !u!4 &1277020587
 Transform:
   m_ObjectHideFlags: 0

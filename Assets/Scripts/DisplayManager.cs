@@ -83,7 +83,7 @@ public class DisplayManager
     /// </summary>
     /// <param name="pieceMap">Bit-board representation as int.</param>
     /// <returns>Array of piece positions on game board.</returns>
-    private Vector2[] IntToPositions(int pieceMap)
+    public static Vector2[] IntToPositions(int pieceMap)
     {
         List<Vector2> piecePositions = new List<Vector2>();
 

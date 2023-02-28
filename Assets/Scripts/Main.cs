@@ -21,11 +21,9 @@ public class Main : MonoBehaviour
 
     void Start()
     {
-        bitBoardManager = new BitBoardManager();
-
         // Load past game if one exists, otherwise set up a new game.
-        bitBoard = new BitBoard(PlayerPrefs.GetInt("savedWhitePieces", -1048576), PlayerPrefs.GetInt("savedBlackPieces", 4095), PlayerPrefs.GetInt("savedQueenPieces", 0));
-        bitBoardManager.bitBoard = bitBoard;
+        bitBoard = new BitBoard(PlayerPrefs.GetInt("savedWhitePieces", unchecked((int)0b11111111111100000000000000000000)), PlayerPrefs.GetInt("savedBlackPieces", unchecked((int)0b00000000000000000000111111111111)), PlayerPrefs.GetInt("savedQueenPieces", 0));
+        bitBoardManager = new BitBoardManager(bitBoard);
 
         displayManager = new DisplayManager(
             bitBoard.pieces[(int)PieceType.whitePieces],

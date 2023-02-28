@@ -18,7 +18,8 @@ public class Piece : MonoBehaviour
     private Vector2Int originalPos;
     Vector2 pieceOffset = new Vector2(-0.5f, -0.5f);
     private int curBitBoardPos;
-    private PieceType pieceType;
+    private PieceType pieceType, pieceColor;
+    private bool isMoving = false;
 
     void Awake()
     {
@@ -35,6 +36,7 @@ public class Piece : MonoBehaviour
     public void Initialize(PieceType color, int bitBoardPos, bool queenStatus)
     {
         curBitBoardPos = bitBoardPos;
+        pieceColor = color;
 
         if (color == PieceType.whitePieces)
         {
@@ -83,35 +85,55 @@ public class Piece : MonoBehaviour
 
     private void OnMouseDown()
     {
-        originalPos = new Vector2Int((int)transform.position.x, (int)transform.position.y);
-        //TODO: Display legal moves.
+        // check if piece can be moved.
+        originalPos = new Vector2Int(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.y));
+        Vector2[] allMovablePieces = DisplayManager.IntToPositions(mainController.bitBoardManager.GetMovable(pieceColor));
+        for (int i = 0; i < allMovablePieces.Length; i++)
+        {
+            if (originalPos == allMovablePieces[i])
+            {
+                isMoving = true;
+            }
+        }
+
+        // Display legal moves.
+        if (isMoving)
+        {
+
+        }
     }
 
     // Move piece to mouse position while being dragged.
     private void OnMouseDrag()
     {
-        Ray cameraRaycast = DisplayManager.mainCamera.ScreenPointToRay(Input.mousePosition);
-        transform.position = new Vector2(cameraRaycast.origin.x, cameraRaycast.origin.y) + pieceOffset;
+        if (isMoving)
+        {
+            Ray cameraRaycast = DisplayManager.mainCamera.ScreenPointToRay(Input.mousePosition);
+            transform.position = new Vector2(cameraRaycast.origin.x, cameraRaycast.origin.y) + pieceOffset;
+        }
     }
 
     // Place piece on closest board position if available.
     void OnMouseUp()
     {
-        int closestX = Mathf.RoundToInt(transform.position.x);
-        int closestY = Mathf.RoundToInt(transform.position.y);
-        Vector2Int newPos = new Vector2Int(closestX, closestY);
+        if (isMoving)
+        {
+            int closestX = Mathf.RoundToInt(transform.position.x);
+            int closestY = Mathf.RoundToInt(transform.position.y);
+            Vector2Int newPos = new Vector2Int(closestX, closestY);
 
-        // Check if new position is an allowed position on the board. If not, return to original position.
-        if ((closestX % 2 == closestY % 2) && closestX >= -0.01f && closestX <= 7.01f && closestY >= -0.01f && closestY <= 7.01f && Vector2.Distance(newPos, transform.position) <= 0.5f)
-        {
-            MoveTo(newPos);
-            int newBitBoardPos = DisplayManager.PositionToInt(newPos);
-            mainController.bitBoardManager.MovePiece(pieceType, curBitBoardPos, newBitBoardPos);
-            curBitBoardPos = newBitBoardPos;
-        }
-        else
-        {
-            MoveTo(originalPos);
+            // Check if new position is an allowed position on the board. If not, return to original position.
+            if ((closestX % 2 == closestY % 2) && closestX >= -0.01f && closestX <= 7.01f && closestY >= -0.01f && closestY <= 7.01f && Vector2.Distance(newPos, transform.position) <= 0.5f)
+            {
+                MoveTo(newPos);
+                int newBitBoardPos = DisplayManager.PositionToInt(newPos);
+                mainController.bitBoardManager.MovePiece(pieceType, curBitBoardPos, newBitBoardPos);
+                curBitBoardPos = newBitBoardPos;
+            }
+            else
+            {
+                MoveTo(originalPos);
+            }
         }
     }
 }
