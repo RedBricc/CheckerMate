@@ -32,6 +32,10 @@ public class BitBoardManager
         bitBoard.pieces[(int)type] = (bitBoard.pieces[(int)type] ^ oldPos) | newPos;
     }
 
+    /// <summary>
+    /// Find movable pieces of one color.
+    /// </summary>
+    /// <param name="color">Type of piece.</param>
     public int GetMovable(PieceType color)
     {
         int freeSpaces = ~(bitBoard.pieces[0] | bitBoard.pieces[1]);

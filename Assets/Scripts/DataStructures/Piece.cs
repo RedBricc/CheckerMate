@@ -99,7 +99,7 @@ public class Piece : MonoBehaviour
         // Display legal moves.
         if (isMoving)
         {
-
+            spriteRenderer.sortingOrder = 20;
         }
     }
 
@@ -123,7 +123,12 @@ public class Piece : MonoBehaviour
             Vector2Int newPos = new Vector2Int(closestX, closestY);
 
             // Check if new position is an allowed position on the board. If not, return to original position.
-            if ((closestX % 2 == closestY % 2) && closestX >= -0.01f && closestX <= 7.01f && closestY >= -0.01f && closestY <= 7.01f && Vector2.Distance(newPos, transform.position) <= 0.5f)
+            if ((closestX % 2 == closestY % 2) &&
+                    closestX >= -0.01f &&
+                    closestX <= 7.01f &&
+                    closestY >= -0.01f &&
+                    closestY <= 7.01f &&
+                    Vector2.Distance(newPos, transform.position) <= 0.5f)
             {
                 MoveTo(newPos);
                 int newBitBoardPos = DisplayManager.PositionToInt(newPos);
@@ -134,6 +139,9 @@ public class Piece : MonoBehaviour
             {
                 MoveTo(originalPos);
             }
+            spriteRenderer.sortingOrder = 10;
+
+            isMoving = false;
         }
     }
 }
