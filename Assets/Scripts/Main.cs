@@ -10,14 +10,11 @@ using static BitBoard;
 public class Main : MonoBehaviour
 {
     public static readonly int[] bytePositions = new int[32] { -2147483648, 1073741824, 536870912, 268435456, 134217728, 67108864, 33554432, 16777216, 8388608, 4194304, 2097152, 1048576, 524288, 262144, 131072, 65536, 32768, 16384, 8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1 };
-    public DisplayManager displayManager;
-    public BitBoardManager bitBoardManager;
+    public static DisplayManager displayManager;
+    public static BitBoardManager bitBoardManager;
+    public static MinMax minMax;
+    public static bool isWhiteTurn = true;
     private BitBoard bitBoard;
-
-    void Awake()
-    {
-        Piece.mainController = this;
-    }
 
     void Start()
     {
@@ -33,7 +30,12 @@ public class Main : MonoBehaviour
             bitBoard.pieces[(int)PieceType.blackPieces],
             bitBoard.pieces[(int)PieceType.queenPieces],
             transform,
-            GameObject.FindWithTag("Pieces").transform);
+            GameObject.FindWithTag("Pieces").transform,
+            GameObject.FindWithTag("Move Dots").transform);
+
+        minMax = new MinMax(bitBoard.pieces[(int)PieceType.whitePieces],
+            bitBoard.pieces[(int)PieceType.blackPieces],
+            bitBoard.pieces[(int)PieceType.queenPieces]);
     }
 
     void Update()
@@ -44,6 +46,10 @@ public class Main : MonoBehaviour
             PlayerPrefs.SetInt("savedWhitePieces", bitBoard.pieces[(int)PieceType.whitePieces]);
             PlayerPrefs.SetInt("savedBlackPieces", bitBoard.pieces[(int)PieceType.blackPieces]);
             PlayerPrefs.SetInt("savedQueenPieces", bitBoard.pieces[(int)PieceType.queenPieces]);
+            PlayerPrefs.Save();
+            Debug.Log("Game Saved");
+            Application.Quit();
+            return;
         }
 
 
@@ -51,9 +57,14 @@ public class Main : MonoBehaviour
         if (bitBoardManager.GetMovable(PieceType.whitePieces) == 0 || bitBoardManager.GetMovable(PieceType.blackPieces) == 0)
         {
             Debug.Log("Game Over");
+            PlayerPrefs.DeleteKey("savedWhitePieces");
+            PlayerPrefs.DeleteKey("savedBlackPieces");
+            PlayerPrefs.DeleteKey("savedQueenPieces");
+            PlayerPrefs.Save();
+            return;
         }
 
         // Update piece colors.
-        displayManager.UpdatePieceColors(bitBoard.pieces[(int)PieceType.whitePieces], bitBoard.pieces[(int)PieceType.blackPieces], bitBoard.pieces[(int)PieceType.queenPieces]);
+        displayManager.UpdatePieces(bitBoard.pieces[(int)PieceType.whitePieces], bitBoard.pieces[(int)PieceType.blackPieces], bitBoard.pieces[(int)PieceType.queenPieces]);
     }
 }
