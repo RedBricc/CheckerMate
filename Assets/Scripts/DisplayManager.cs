@@ -44,11 +44,15 @@ public class DisplayManager
         Piece.PIECE = Sprite.Create(Resources.Load(PlayerPrefs.GetString("preferredPieceTexture", "Textures/Piece")) as Texture2D, blankPieceSprite.rect, new Vector2(0.5f, 0.5f), blankPieceSprite.pixelsPerUnit);
         Piece.QUEEN = Sprite.Create(Resources.Load(PlayerPrefs.GetString("preferredQueenTexture", "Textures/Queen")) as Texture2D, blankPieceSprite.rect, new Vector2(0.5f, 0.5f), blankPieceSprite.pixelsPerUnit);
         ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("preferredLightColor", "#FFD7B6"), out Piece.LIGHT);
+        ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("preferredLightColor", "#FFE7D4"), out Piece.LIGHT_MOVABLE);
+        ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("preferredLightColor", "#FFB67A"), out Piece.LIGHT_CAN_CAPTURE);
         ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("preferredDarkColor", "#261107"), out Piece.DARK);
+        ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("preferredDarkColor", "#4D2614"), out Piece.DARK_MOVABLE);
+        ColorUtility.TryParseHtmlString(PlayerPrefs.GetString("preferredDarkColor", "#873007"), out Piece.DARK_CAN_CAPTURE);
     }
 
     /// <summary>
-    /// Initialize board and pieces that are on it.
+    /// Initialize board and it's pieces.
     /// </summary>
     /// <param name="whitePieces">Integer representation of initial white piece layout.</param>
     /// <param name="blackPieces">Integer representation of initial black piece layout.</param>
@@ -115,5 +119,11 @@ public class DisplayManager
         }
 
         return result;
+    }
+
+    /// <summary>
+    public void UpdatePieceColors(int whitePieces, int blackPieces, int queenPieces)
+    {
+
     }
 }

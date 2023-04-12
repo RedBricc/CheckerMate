@@ -10,7 +10,7 @@ public class Piece : MonoBehaviour
 {
     private static readonly Vector3 xy = new Vector3(1, 1, 0);
     public static Main mainController;
-    public static Color LIGHT, DARK;
+    public static Color LIGHT, LIGHT_MOVABLE, LIGHT_CAN_CAPTURE, DARK, DARK_MOVABLE, DARK_CAN_CAPTURE;
     public static float speed = 10f;
     public static Sprite PIECE, QUEEN;
     private Vector3 curVelocity = Vector3.zero;
@@ -19,7 +19,7 @@ public class Piece : MonoBehaviour
     Vector2 pieceOffset = new Vector2(-0.5f, -0.5f);
     private int curBitBoardPos;
     private PieceType pieceType, pieceColor;
-    private bool isMoving = false;
+    private bool isMoving = false, isMovable = false, canCaputre = false;
 
     void Awake()
     {
@@ -56,6 +56,22 @@ public class Piece : MonoBehaviour
         {
             spriteRenderer.sprite = PIECE;
             pieceType = color;
+        }
+    }
+
+    void Update()
+    {
+        if (canCaputre)
+        {
+            spriteRenderer.color = pieceColor == PieceType.whitePieces ? LIGHT_CAN_CAPTURE : DARK_CAN_CAPTURE;
+        }
+        else if (isMovable)
+        {
+            spriteRenderer.color = pieceColor == PieceType.whitePieces ? LIGHT_MOVABLE : DARK_MOVABLE;
+        }
+        else
+        {
+            spriteRenderer.color = pieceColor == PieceType.whitePieces ? LIGHT : DARK;
         }
     }
 

@@ -66,6 +66,40 @@ public class BitBoardManager
         }
     }
 
+    /// <summary>
+    /// Find pieces of one color that can capture the openent's pieces.
+    /// </summary>
+    /// <param name="color">Type of piece.</param>
+    public int GetCapturing(PieceType color)
+    {
+        int freeSpaces = ~(bitBoard.pieces[0] | bitBoard.pieces[1]);
+        int queens = (bitBoard.pieces[(int)color]) & bitBoard.pieces[2];
+
+        int canCapture = 0;
+        switch ((int)color)
+        {
+            case 0:
+                canCapture = GetCapturersUp(freeSpaces, bitBoard.pieces[0], bitBoard.pieces[1]);
+
+                if (queens != 0)
+                {
+                    canCapture |= GetCapturersDown(freeSpaces, queens, bitBoard.pieces[1]);
+                }
+                return canCapture;
+            case 1:
+                canCapture = GetCapturersDown(freeSpaces, bitBoard.pieces[1], bitBoard.pieces[0]);
+
+                if (queens != 0)
+                {
+                    canCapture |= GetCapturersUp(freeSpaces, queens, bitBoard.pieces[0]);
+                }
+                return canCapture;
+            default:
+                Debug.LogError("Wrong color index!");
+                return 0;
+        }
+    }
+
     private int GetMovableUp(int freeSpaces, int pieces)
     {
         int canMove = (freeSpaces << 4) & pieces;
@@ -82,5 +116,43 @@ public class BitBoardManager
         canMove |= ((freeSpaces & MoveMask_DownRight) >> 5) & pieces;
 
         return canMove;
+    }
+
+    private int GetCapturersUp(int freeSpaces, int ownPieces, int oponentPieces)
+    {
+        int canCapture = 0;
+        int adjecentoponentPieces = (freeSpaces << 4) & oponentPieces;
+
+        if (adjecentoponentPieces != 0)
+        {
+            canCapture |= ((adjecentoponentPieces & MoveMask_UpLeft) << 3) & ownPieces;
+            canCapture |= ((adjecentoponentPieces & MoveMask_UpRight) << 5) & ownPieces;
+        }
+
+        adjecentoponentPieces = ((freeSpaces & MoveMask_UpLeft) << 3) & oponentPieces;
+        adjecentoponentPieces |= ((freeSpaces & MoveMask_UpRight) << 5) & oponentPieces;
+
+        canCapture |= (adjecentoponentPieces << 4) & ownPieces;
+
+        return canCapture;
+    }
+
+    private int GetCapturersDown(int freeSpaces, int ownPieces, int oponentPieces)
+    {
+        int canCapture = 0;
+        int adjecentoponentPieces = (freeSpaces >> 4) & oponentPieces;
+
+        if (adjecentoponentPieces != 0)
+        {
+            canCapture |= ((adjecentoponentPieces & MoveMask_DownLeft) >> 3) & ownPieces;
+            canCapture |= ((adjecentoponentPieces & MoveMask_DownRight) >> 5) & ownPieces;
+        }
+
+        adjecentoponentPieces = ((freeSpaces & MoveMask_DownLeft) >> 3) & oponentPieces;
+        adjecentoponentPieces |= ((freeSpaces & MoveMask_DownRight) >> 5) & oponentPieces;
+
+        canCapture |= (adjecentoponentPieces >> 4) & ownPieces;
+
+        return canCapture;
     }
 }

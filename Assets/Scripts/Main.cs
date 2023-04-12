@@ -35,4 +35,25 @@ public class Main : MonoBehaviour
             transform,
             GameObject.FindWithTag("Pieces").transform);
     }
+
+    void Update()
+    {
+        // Save game if player quits.
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PlayerPrefs.SetInt("savedWhitePieces", bitBoard.pieces[(int)PieceType.whitePieces]);
+            PlayerPrefs.SetInt("savedBlackPieces", bitBoard.pieces[(int)PieceType.blackPieces]);
+            PlayerPrefs.SetInt("savedQueenPieces", bitBoard.pieces[(int)PieceType.queenPieces]);
+        }
+
+
+        // Check for game over.
+        if (bitBoardManager.GetMovable(PieceType.whitePieces) == 0 || bitBoardManager.GetMovable(PieceType.blackPieces) == 0)
+        {
+            Debug.Log("Game Over");
+        }
+
+        // Update piece colors.
+        displayManager.UpdatePieceColors(bitBoard.pieces[(int)PieceType.whitePieces], bitBoard.pieces[(int)PieceType.blackPieces], bitBoard.pieces[(int)PieceType.queenPieces]);
+    }
 }
